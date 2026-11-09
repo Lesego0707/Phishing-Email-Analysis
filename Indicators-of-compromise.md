@@ -1,72 +1,51 @@
 # Indicators of Compromise (IOC) Register
+This register catalogues the technical data points and threat intelligence collected during the investigation. These indicators can be used by defensive teams to block the threat at the perimeter and hunt for other impacted systems.
 
-## 1. Purpose
+## 🛠️ Defanging Policy
+To ensure repository safety and prevent accidental clicks, all network indicators below have been **defanged** (e.g., changing `http` to `hxxp` and using brackets `[.]` for periods).
 
-This document records potential and verified indicators relevant to case PHISH-001.
+---
 
-In a SOC investigation, IOCs are observable artifacts that may help identify malicious activity, such as suspicious domains, URLs, IP addresses, file hashes, or email sender infrastructure.
+## 1. Network & Infrastructure IOCs
 
-Suspicious wording and social-engineering techniques are useful evidence, but they are not necessarily technical IOCs.
+| Indicator Type | Value (Defanged) | Context / Association | Suggested Defensive Action |
+| :--- | :--- | :--- | :--- |
+| **Originating IP** | `198[.]51[.]100[.]12` | Malicious mail transfer agent server used to send the message. | Block at perimeter firewall level. |
+| **Malicious Domain** | `microsoft-security-alert[.]xyz` | Look-alike root domain registered by the attacker for typosquatting. | Sinkhole / Block at internal DNS layers. |
+| **Mail Hostname** | `mail[.]microsoft-security-alert[.]xyz` | Explicit subdomain routing the phishing email flow. | Add to Secure Email Gateway (SEG) domain blocklist. |
+| **Phishing URL** | `hxxp://login[.]microsoftonline[.]com[.]microsoft-security-alert[.]xyz/verify` | The credential harvesting landing page link embedded in the body. | Block at corporate web proxy/web filters. |
 
-## 2. Case Information
+---
 
-| Field | Details |
-|---|---|
-| Case ID | PHISH-001 |
-| Investigation Type | Phishing Email Analysis |
-| Evidence Source | Simulated email |
-| Current Status | Preliminary review |
-| IOC Verification | No malicious technical indicators verified |
+## 2. Behavioral & Email IOCs
 
-## 3. IOC Register
+| Indicator Type | Threat Value | Analyst Threat Notes |
+| :--- | :--- | :--- |
+| **Spoofed Display Name** | `Microsoft Account Team` | Used to masquerade as an internal/trusted system administrator. |
+| **Spoofed Domain** | `security@microsoft.com` | Fake sender address used to exploit missing protocol enforcement. |
+| **Reply-To Path** | `support@microsoft-security-alert.xyz` | Attacker-controlled inbox meant to hijack manual user responses. |
+| **Subject Keyword** | `Urgent: Your account will be suspended` | Social engineering hook relying on panic and psychological fear. |
 
-| Indicator Type | Observed Value | Assessment | Status |
-|---|---|---|---|
-| Sender address | `security@example.invalid` | Placeholder sender identity | Training data only |
-| Reply-To address | `support@example.invalid` | Different from sender address; not proof of malicious activity | Training data only |
-| Domain | `example.invalid` | Reserved invalid example domain | Not a malicious IOC |
-| URL | Not provided | Cannot assess destination or reputation | Not available |
-| IP address | Not provided | No sending IP can be established | Not available |
-| File hash | Not provided | No attachment available for hashing | Not available |
-| Attachment | Not provided | No file analysis possible | Not available |
+---
 
-**Important:** The example addresses and domain are included only to support a safe training scenario. They must not be reported as real attacker infrastructure or malicious IOCs.
+## 3. SIEM Detection & Threat Hunting Queries
 
-## 4. Suspicious Email Characteristics
+To verify if this attack targeted other mailboxes or if any endpoint successfully established a connection with the malicious server, run the following advanced search queries across the SIEM platform:
 
-The following characteristics support further investigation but are not verified technical IOCs.
+### A. Email Gateway Hunt (Microsoft Defender / SEG Logs)
+```kql
+EmailEvents
+| where SenderMailFromAddress =~ "security@microsoft.com" or SenderIPv4 == "198.51.100.12"
+| project Timestamp, NetworkMessageId, SenderMailFromAddress, RecipientEmailAddress, Subject, DeliveryAction
+```
 
-| Characteristic | Why It Matters |
-|---|---|
-| Urgent deadline | May pressure a recipient into acting without verification. |
-| Threat of account suspension | Uses fear to influence user behaviour. |
-| Request to verify account details | May be an attempt to obtain credentials or sensitive information. |
-| Claimed Microsoft identity | Requires verification of the sender's actual identity. |
+### B. Network Traffic Hunt (Firewall / Web Proxy Logs)
+```kql
+DeviceNetworkEvents
+| where RemoteUrl contains "microsoft-security-alert.xyz" or RemoteIP == "198.51.100.12"
+| project Timestamp, DeviceName, InitiatingProcessAccountName, RemoteUrl, RemoteIP, LocalIP
+```
 
-## 5. IOC Verification Workflow
 
-For an authorized investigation involving a genuine suspicious email:
 
-1. Preserve the original email and its full headers.
-2. Extract actual sender, Reply-To, sending IP, URLs, and attachment metadata where available.
-3. Review SPF, DKIM, and DMARC results.
-4. Check appropriate domains, IPs, URLs, or file hashes using approved security tools.
-5. Correlate results with other evidence before classifying an indicator as malicious.
-6. Record the source, timestamp, analysis result, and confidence level for each finding.
-7. Share or block indicators only in accordance with organizational procedures.
 
-## 6. Investigation Limitations
-
-This case uses a self-created simulated email. It does not contain a real sender IP, a live destination URL, an attachment, or a file hash.
-
-No VirusTotal detections, DNS findings, authentication results, or external threat intelligence findings have been established for this case.
-
-These fields should be updated only when genuine, appropriate evidence becomes available.
-
-## 7. Conclusion
-
-The email contains suspicious social-engineering characteristics, but no malicious technical IOC has been verified.
-
-This distinction is important in SOC work: indicators must be supported by evidence, and a suspicious email should not be attributed to an attacker without sufficient investigation.
-
-The IOC register will be updated if additional evidence becomes available.
