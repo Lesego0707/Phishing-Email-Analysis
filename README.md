@@ -25,6 +25,15 @@ Phishing-Email-Analysis/
 └── Indicators-of-compromise.md (Defanged IOC Registry & SIEM KQL Queries)
 ```
 
+## Lessons Learned 
+
+Every phishing incident provides critical telemetry that defensive teams must use to harden the corporate attack surface.
+
+*   **Defense-in-Depth for Email:** Mail filters cannot rely entirely on content filtering. Security protocols like **DMARC with a strict reject (`p=reject`) policy** must be enforced globally to stop look-alike domains from hitting user inboxes.
+*   **The Danger of Typosquatting:** Attackers frequently place legitimate subdomains (e.g., `://microsoftonline.com`) at the front of their malicious domains to bypass casual human scrutiny. User awareness training must emphasize checking the *root domain* immediately before the first forward slash.
+*   **Proactive Threat Hunting via SIEM:** Incident response shouldn't stop at the single reported email. Writing and deploying proactive **SIEM hunting queries (KQL)** ensures that silent victims who clicked the link but didn't report it are quickly identified and remediated.
+*   **Automated IR Playbooks:** Reducing the Mean Time to Resolution (MTTR) requires automating the initial triage steps—such as auto-defanging links and performing automated WHOIS/reputation lookups on newly registered domains.
+
 ## Tools and Technologies
 *   **Secure Email Gateway (SEG) Emulation:** Log analysis tracking envelope properties.
 *   **CyberChef / WHOIS Triage:** Infrastructure lifespan profiling and domain analysis.
@@ -40,4 +49,4 @@ Phishing-Email-Analysis/
 4.  **Threat Intel Registration (`Indicators-of-compromise.md`):** Compiling a structured, safely defanged IOC list paired with KQL detection logic.
 
 ## Project Status
-✅ **Completed** — Full-spectrum threat analysis and documentation finalized.
+**Completed** — Full-spectrum threat analysis and documentation finalized.
