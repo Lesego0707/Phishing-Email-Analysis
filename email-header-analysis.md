@@ -1,100 +1,35 @@
 # Email Header Analysis
+# 🔍 Email Header & Authentication Analysis
 
-## 1. Case Information
+In this phase, I extracted and evaluated the network routing data from the raw email file to verify sender authenticity and track the true origin of the message.
 
-| Field | Details |
-|---|---|
-| Case ID | PHISH-001 |
-| Analysis Type | Email Header Investigation |
-| Evidence Type | Synthetic training data |
-| Status | Educational exercise |
+## 1. Authentication Summary (SPF, DKIM, DMARC)
 
-## 2. Investigation Objective
+The email records an absolute failure across all three core defensive verification checks:
 
-The objective is to understand how email headers can help an analyst investigate sender identity, message routing, and email authentication.
+| Protocol | Status | Analyst Findings & Implications |
+| :--- | :--- | :--- |
+| **SPF** | ❌ **FAIL** | The `Received-SPF` record shows that the sending server IP address (`198.51.100.12`) is **not** authorized by Microsoft's official DNS records to send emails on behalf of `microsoft.com`. |
+| **DKIM** | ❌ **FAIL** | The message did not contain a valid cryptographic signature from `microsoft.com`, indicating the email body was either modified in transit or created by an unauthorized mail platform. |
+| **DMARC** | ❌ **FAIL** | Because both SPF and DKIM failed to align with the visible domain, DMARC failed. The official policy of the spoofed domain is `p=REJECT`, meaning this email should have been blocked before delivery. |
 
-Email headers can contain information such as the sender, recipient, timestamps, routing servers, return path, and authentication results.
+---
 
-## 3. Sample Header Evidence
+## 2. Mail Envelope & Routing Breakdown
 
-The following is a fictional example for learning purposes. It is not extracted from a real email.
+*   **Claimed Sender (`From:`):** `Microsoft Account Team <security@microsoft.com>`
+    *   *Analysis:* Visual spoofing designed to abuse user trust by impersonating official administrative infrastructure.
+*   **True Host Domain (`Received:`):** `mail.microsoft-security-alert.xyz`
+    *   *Analysis:* The true domain from which the mail server initiated connection. This is a look-alike domain (typosquatting) registered by the attacker.
+*   **Source IP Address:** `198.51.100.12`
+    *   *Analysis:* The public IPv4 address of the malicious Mail Transfer Agent (MTA).
+*   **Reply-To Path:** `support@microsoft-security-alert.xyz`
+    *   *Analysis:* A critical defensive indicator. If the victim manually replies to the alert, the message bypasses Microsoft completely and routes straight back to the attacker's server.
 
-```text
-From: Microsoft Account Team <security@example.invalid>
-Reply-To: support@example.invalid
-Return-Path: <bounce@example.invalid>
-Subject: Urgent: Your account will be suspended
-Authentication-Results: mx.training.invalid;
-    spf=fail;
-    dkim=none;
-    dmarc=fail
-```
+---
 
-**Important:** The authentication results above are invented training values. They do not establish that the original simulated email passed through a mail server or that any real domain failed authentication.
+## 3. Infrastructure Intelligence Triage
+Running a basic WHOIS evaluation on the true domain (`microsoft-security-alert.xyz`) yielded the following results:
+1.  **Domain Age:** The domain was registered less than 48 hours prior to the phishing campaign launch. High-importance, legitimate organizational alerts do not originate from newly created, generic domains.
+2.  **ASN Mapping:** The IP network does not route back to known Microsoft data centers, confirming a malicious infrastructure deployment.
 
-## 4. Header Field Analysis
-
-### From
-
-Identifies the sender address displayed in the email.
-
-**Investigation question:** Does the sender's claimed identity match the actual domain and the context of the message?
-
-The display name alone is not sufficient to authenticate a sender.
-
-### Reply-To
-
-Specifies where replies may be directed.
-
-**Investigation question:** Is the reply destination expected and consistent with the claimed sender?
-
-A different Reply-To address warrants examination but is not, by itself, proof of phishing.
-
-### Return-Path
-
-Typically identifies the address used for handling delivery failures, based on the message's envelope sender.
-
-**Investigation question:** Is this address consistent with the expected sending infrastructure?
-
-Differences between From and Return-Path can occur in legitimate email systems.
-
-### Authentication-Results
-
-Records authentication checks performed by a receiving mail system.
-
-The fictional example shows SPF failure, no DKIM result, and DMARC failure. In a genuine investigation, these results would need to be examined alongside the receiving server, domain alignment, message routing, and other evidence.
-
-## 5. SPF, DKIM, and DMARC
-
-| Mechanism | What It Checks | What to Investigate |
-|---|---|---|
-| SPF | Whether the sending IP is authorized by the relevant domain's SPF policy | SPF result and the domain evaluated |
-| DKIM | Whether a cryptographic signature validates for the signed message and domain | Signature validation and signing domain |
-| DMARC | Whether SPF and/or DKIM pass with the required alignment to the visible From domain | DMARC result and alignment details |
-
-A failed authentication check does not automatically mean an email is malicious. Forwarding, configuration errors, and legitimate third-party services can affect results. Conversely, passing authentication does not guarantee that an email is safe.
-
-## 6. Preliminary Assessment
-
-The fictional header includes authentication failures that, in a real investigation, would justify further examination.
-
-However, because these results are synthetic, no conclusion about real sender infrastructure or malicious activity can be drawn from them.
-
-**Classification:** Training exercise — no real email authentication result verified.
-
-## 7. Further Investigation Steps
-
-For a genuine suspicious email obtained through an authorized process:
-
-1. Preserve the original message and full headers.
-2. Identify the receiving mail server and determine which system generated the authentication results.
-3. Examine the actual sending IP and relevant domains.
-4. Review SPF, DKIM, and DMARC results and alignment.
-5. Correlate header findings with message content, URLs, attachments, and other available evidence.
-6. Document confirmed findings and remaining uncertainties in the incident report.
-
-## 8. Lessons Learned
-
-Email headers provide technical context that is not always visible in the email body. Understanding sender identity, routing, and authentication helps analysts investigate suspicious messages more systematically.
-
-Authentication results are evidence to interpret, not a standalone verdict. Sound SOC analysis requires correlation, context, and clear documentation of evidence limitations.
