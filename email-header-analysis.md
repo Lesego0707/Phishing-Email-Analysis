@@ -1,5 +1,4 @@
-# Email Header Analysis
-# 🔍 Email Header & Authentication Analysis
+#  Email Header & Authentication Analysis
 
 In this phase, I extracted and evaluated the network routing data from the raw email file to verify sender authenticity and track the true origin of the message.
 
@@ -28,8 +27,10 @@ The email records an absolute failure across all three core defensive verificati
 
 ---
 
-## 3. Infrastructure Intelligence Triage
-Running a basic WHOIS evaluation on the true domain (`microsoft-security-alert.xyz`) yielded the following results:
-1.  **Domain Age:** The domain was registered less than 48 hours prior to the phishing campaign launch. High-importance, legitimate organizational alerts do not originate from newly created, generic domains.
-2.  **ASN Mapping:** The IP network does not route back to known Microsoft data centers, confirming a malicious infrastructure deployment.
+## 3. Infrastructure Triage Methodology (Hypothetical — No Live Lookup Performed)
 
+As this is a synthetic training scenario, the domain itself cannot be queried live — below is the triage an analyst would perform and the indicators that would typically confirm malicious infrastructure.
+
+1. **Domain Age:** A WHOIS lookup would typically show a newly registered domain (often less than 48 hours old). Legitimate organizational security alerts do not originate from brand-new, generic domains — a young domain age is a strong red flag for attacker-controlled infrastructure.
+
+2. **ASN Mapping:** A lookup of the IP's Autonomous System Number (ASN) would typically show it does not route back to known Microsoft data centers, which would further confirm the infrastructure is unrelated to the legitimate brand being spoofed.
