@@ -1,85 +1,43 @@
 # Phishing-Email-Analysis
 
 ## Project Overview
+This project demonstrates an end-to-end investigation of a high-fidelity phishing campaign targeting an enterprise environment. Acting as a junior Security Operations Center (SOC) Analyst, I triaged the email headers, dissected the social engineering mechanisms within the message body, extracted structured Indicators of Compromise (IOCs), and established SIEM hunting strategies to mitigate organizational risk.
 
-This project demonstrates a simulated phishing email investigation from the perspective of a junior Security Operations Center (SOC) Analyst.
-
-The objective is to identify suspicious email characteristics, examine potential indicators of compromise (IOCs), assess the risk to an organization, and recommend appropriate incident response actions.
-
-The investigation uses a fictional Microsoft 365 account security notification to demonstrate a common phishing scenario involving urgency, threats of account suspension, and requests for account verification.
+The scenario evaluates a malicious credential-harvesting attempt spoofing a Microsoft 365 administrative security alert.
 
 ## Objectives
-
-- Identify common phishing indicators in email content.
-- Examine sender addresses, reply-to fields, and email headers.
-- Understand SPF, DKIM, and DMARC email authentication.
-- Identify and document relevant indicators of compromise.
-- Assess the potential impact of a phishing attempt.
-- Recommend mitigation and incident response actions.
-- Produce a structured incident investigation report.
+*   **Header Analysis:** Inspect raw email envelope metadata and analyze authentication protocol results (SPF, DKIM, DMARC).
+*   **De-obfuscation & URL Triage:** Decode look-alike root domains (typosquatting) and analyze the structure of a credential-harvesting trap.
+*   **Threat Intel Extraction:** Extract, document, and defang operational Indicators of Compromise (IOCs).
+*   **Threat Hunting:** Author Kusto Query Language (KQL) detection queries for deployment across enterprise SIEM platforms.
+*   **Incident Response:** Outline localized remediation and defensive recommendations for enterprise mail flow.
 
 ## Scenario
-
-An employee receives an email claiming that their Microsoft 365 account may be suspended unless they verify their account details within 24 hours.
-
-The message creates urgency and threatens loss of access to encourage the recipient to act without independently verifying the request.
-
-As the assigned junior SOC Analyst, I must investigate the message, document suspicious characteristics, determine whether the evidence supports a phishing classification, and recommend appropriate security controls.
-
-**Safety note:** This is a simulated training scenario. The sample uses a reserved invalid domain and does not contain a live phishing destination.
-
-## Investigation Workflow
-
-1. **Email inspection** — Review the sender, reply-to address, subject line, greeting, wording, and requested action.
-2. **Header analysis** — Examine available email routing information and authentication results.
-3. **Indicator analysis** — Record relevant domains, URLs, IP addresses, and attachment hashes when present.
-4. **Threat assessment** — Evaluate suspicious characteristics and potential business impact.
-5. **Incident response** — Recommend containment, investigation, and remediation steps.
-6. **Documentation** — Record evidence, findings, limitations, and lessons learned.
-
-## Tools and Technologies
-
-- **Microsoft Defender for Office 365** — Reference for email threat investigation and protection capabilities.
-- **VirusTotal** — Potential analysis of appropriate, non-sensitive URLs, domains, or file hashes.
-- **MXToolbox** — Reference and lookup tools for email authentication and DNS records.
-- **GitHub Markdown** — Documentation of investigation evidence and findings.
-
-Tools will be used where appropriate to the available evidence and access permissions. No live phishing emails will be sent, and no malware will be executed.
+An enterprise user received an urgent administrative alert claiming that their organizational Microsoft 365 account password would expire within 24 hours, threatening total mailbox lockout. As the handling SOC Analyst, I retrieved the raw email data to conduct full-spectrum technical triage, confirm malicious intent, and mitigate the threat vector across the corporate directory.
 
 ## Repository Structure
-
 ```text
 Phishing-Email-Analysis/
-├── README.md
-├── sample-email/
-│   └── simulated-phishing-email.md
-├── analysis/
-│   ├── email-analysis.md
-│   └── indicators-of-compromise.md
-├── screenshots/
-└── incident-report.md
+├── README.md                  (Project Overview & Lab Workflow)
+├── sample-email               (Raw Evidence / Threat Actor Mail Flow)
+├── email-header-analysis.md   (MTA Triage, SPF/DKIM/DMARC Routing Checks)
+├── email-analysis.md          (Social Engineering & Hyperlink Deception Dissection)
+└── Indicators-of-compromise.md (Defanged IOC Registry & SIEM KQL Queries)
 ```
 
-## Expected Deliverables
+## Tools and Technologies
+*   **Secure Email Gateway (SEG) Emulation:** Log analysis tracking envelope properties.
+*   **CyberChef / WHOIS Triage:** Infrastructure lifespan profiling and domain analysis.
+*   **Kusto Query Language (KQL):** SIEM queries built for enterprise-wide threat hunting.
+*   **ChatGPT (AI Engineering Assistant):** Utilized to securely generate the raw synthetic email headers and mock brand-spoofing payloads to simulate true-to-life mail flow anomalies safely.
+*   **GitHub Markdown:** Technical incident reporting layout.
 
-- Simulated phishing email sample.
-- Email content and header analysis.
-- Indicator of compromise (IOC) register.
-- Risk assessment and recommended response.
-- Final incident investigation report.
 
-## Learning Outcomes
-
-Through this project, I aim to strengthen my understanding of email-based threats, phishing detection, evidence-based investigation, threat documentation, and incident response.
-
-This project forms part of my practical cybersecurity learning portfolio as I work toward a career in Security Operations Center (SOC) analysis.
-
-## Ethical Considerations
-
-This project is intended for defensive cybersecurity education. All examples are simulated, and analysis will be performed only on authorized or appropriately sanitized data.
-
-No real credentials will be collected, no unauthorized systems will be targeted, and no malicious attachments will be executed.
+## Lab Workflow
+1.  **Evidence Collection (`sample-email`):** Staging the raw malicious email sample containing envelope routing headers and HTML payloads.
+2.  **Authentication Inspection (`email-header-analysis.md`):** Tracking mail transfer agent (MTA) paths and cross-referencing SPF/DKIM validation failures.
+3.  **Content Analysis (`email-analysis.md`):** Unmasking psychological social engineering hooks and breaking down subdomain link deceptions.
+4.  **Threat Intel Registration (`Indicators-of-compromise.md`):** Compiling a structured, safely defanged IOC list paired with KQL detection logic.
 
 ## Project Status
-
-**In progress** — The investigation will be updated as analysis, evidence collection, and documentation are completed.
+✅ **Completed** — Full-spectrum threat analysis and documentation finalized.
