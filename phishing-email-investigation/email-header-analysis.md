@@ -81,11 +81,8 @@ The simulated email exhibits several characteristics consistent with a phishing 
 - A visible sender address claiming to represent Microsoft.
 - A reported sending host using a brand-imitating domain.
 - A Reply-To address pointing to a different domain.
-- A hypothetical credential-expiration threat designed to create urgency.
+- A hypothetical account-suspension threat designed to create urgency.
 
 Taken together, these indicators support classifying the message as **suspected phishing within the simulated exercise**.
 
 The findings are based on synthetic evidence and should not be interpreted as proof of a real Microsoft security incident or actual attacker infrastructure.
-
-Recommended next steps in a real enterprise environment would include checking for additional recipients, investigating URL activity, reviewing authentication logs for possible account compromise, and escalating the incident for appropriate containment and remediation.
-
