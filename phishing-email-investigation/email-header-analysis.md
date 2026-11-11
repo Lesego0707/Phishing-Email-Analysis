@@ -42,29 +42,34 @@ The mismatch between the visible sender identity, reported sending host, and Rep
 
 However, Received headers must be interpreted carefully. An analyst should identify trusted mail servers and establish which systems added the routing information. Individual Received headers can be forged before a message enters trusted mail infrastructure.
 
-## 3. Infrastructure Triage Methodology (Hypothetical — No Live Lookup Performed)
+## 3. Infrastructure Triage Methodology (Hypothetical)
 
-As this exercise uses synthetic infrastructure indicators, no live domain registration, DNS, IP reputation, or ASN investigation was performed.
+Although live infrastructure investigation was outside the scope of this synthetic exercise, the following methodology outlines the checks a SOC analyst would perform to assess suspicious email infrastructure in a real-world investigation.
 
-In a real SOC investigation, the following checks would help establish whether the reported infrastructure is associated with malicious activity.
+### 3.1 Domain Registration Analysis (WHOIS/RDAP)
+- Examine domain registration and creation dates.
+- Identify the registrar and available registration information.
+- Investigate whether the domain was recently registered.
+- Assess domain age alongside other indicators rather than treating recent registration as proof of malicious activity.
 
-1. **Domain Registration Analysis (WHOIS/RDAP):**
-   - Examine domain registration and creation dates.
-   - Identify the registrar and available registration information.
-   - Investigate whether the domain was recently registered.
-   - Assess domain age alongside other indicators rather than treating recent registration as proof of malicious activity.
+### 3.2 DNS and Hosting Analysis
+- Examine A, MX, NS, and TXT records where available.
+- Identify the mail hosting provider and associated infrastructure.
+- Check whether SPF and DMARC records exist and assess their configuration.
+- Compare the findings against the claimed organisation's legitimate domains.
 
-2. **DNS and Hosting Analysis:**
-   - Examine A, MX, NS, and TXT records where available.
-   - Identify the mail hosting provider and associated infrastructure.
-   - Check whether SPF and DMARC records exist and assess their configuration.
-   - Compare the findings against the claimed organisation's legitimate domains.
+### 3.3 ASN and IP Reputation Analysis
+- Identify the Autonomous System Number (ASN) associated with a real, routable source IP.
+- Examine the network provider and hosting organisation.
+- Check reputable threat intelligence sources for previous reports of suspicious activity.
+- Compare the results against known legitimate infrastructure.
 
-3. **ASN and IP Reputation Analysis:**
-   - Identify the Autonomous System Number (ASN) associated with a real, routable source IP.
-   - Examine the network provider and hosting organisation.
-   - Check reputable threat intelligence sources for previous reports of suspicious activity.
-   - Compare the results against known legitimate infrastructure.
+**Technical limitation:** The synthetic IP address `198.51.100.12` is reserved for documentation purposes. Therefore, meaningful public infrastructure or ASN attribution cannot be established from this address.
+
+### 3.4 Threat Intelligence Correlation
+- Search available threat intelligence platforms for domain and IP reputation.
+- Check for previous phishing or malware associations.
+- Correlate infrastructure findings with the suspicious email content and authentication results.
 
    **Note:** The synthetic IP address `198.51.100.12` is reserved for documentation, so meaningful public infrastructure or ASN attribution cannot be established from it.
 
