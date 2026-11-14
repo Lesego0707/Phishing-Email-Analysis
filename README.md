@@ -28,11 +28,14 @@ The exercise uses synthetic email evidence for educational purposes and does not
 
 ```text
 Phishing-Email-Analysis/
+│
 ├── README.md
-├── sample-email
-├── email-header-analysis.md
-├── email-analysis.md
-└── Indicators-of-compromise.md
+│
+└── phishing-email-investigation/
+    ├── sample-email/
+    ├── email-header-analysis.md
+    ├── email-analysis.md
+    └── Indicators-of-compromise.md
 ```
 
 ## Lessons Learned
