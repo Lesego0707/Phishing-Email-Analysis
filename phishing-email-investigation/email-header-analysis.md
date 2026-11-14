@@ -11,7 +11,7 @@ The simulated email authentication results indicate failures across all three co
 | Protocol | Status | Analyst Findings & Implications |
 |---|---|---|
 | **SPF** | ❌ **FAIL (Simulated)** | The synthetic `Received-SPF` result indicates that the sending IP address (`198.51.100.12`) is not authorised to send email on behalf of the claimed domain. The IP belongs to the documentation-only TEST-NET-2 range and is not a real Microsoft or attacker infrastructure address. |
-| **DKIM** | ❌ **FAIL (Simulated)** | The synthetic authentication result indicates that a valid DKIM signature could not be verified. This may occur when a signature is missing, invalid, or fails cryptographic verification. It does not independently prove that the message was modified in transit. |
+| **DKIM** | ❌ **FAIL (Simulated)** |A DKIM failure indicates that a signature was present but could not be successfully verified, for example because of an invalid signature or a mismatch during verification. | A missing DKIM signature would generally be reported as none, rather than fail.
 | **DMARC** | ❌ **FAIL (Simulated)** | The simulated DMARC result indicates that neither SPF nor DKIM produced a passing, aligned authentication result for the visible From domain. DMARC requires at least one of these mechanisms to pass and align with the From domain. The scenario assumes a hypothetical `p=reject` policy, but no live Microsoft DMARC policy lookup was performed. |
 
 **Analyst Observation:**
@@ -72,11 +72,6 @@ Although live infrastructure investigation was outside the scope of this synthet
 - Correlate infrastructure findings with the suspicious email content and authentication results.
 
    **Note:** The synthetic IP address `198.51.100.12` is reserved for documentation, so meaningful public infrastructure or ASN attribution cannot be established from it.
-
-4. **Threat Intelligence Correlation:**
-   - Search available threat intelligence platforms for domain and IP reputation.
-   - Check for previous phishing or malware associations.
-   - Correlate infrastructure findings with the suspicious email content and authentication results.
 
 ## 4. Analyst Conclusion
 
