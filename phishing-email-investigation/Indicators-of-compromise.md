@@ -48,39 +48,48 @@ The following are example Microsoft Sentinel / Microsoft Defender XDR hunting qu
 ### A. Email Sender Hunt
 
 Search for messages using the claimed sender address or envelope sender address.
-EmailEvents
 
+```kusto
+EmailEvents
 | where SenderFromAddress =~ "security@microsoft.com"
     or SenderMailFromAddress =~ "security@microsoft.com"
 | project Timestamp, NetworkMessageId, SenderFromAddress,
           SenderMailFromAddress, RecipientEmailAddress,
           Subject, DeliveryAction
 | order by Timestamp desc
-## Analyst note: Identifies messages using the claimed sender or envelope sender address. Matching results do not independently prove spoofing or malicious activity.
+```
+
+> **Analyst note:** Identifies messages using the claimed sender or envelope sender address. Matching results do not independently prove spoofing or malicious activity.
 
 ### B. Email URL Hunt
 
 Search email URL records for the suspicious domain.
 
+```kusto
 EmailUrlInfo
 | where Url contains "microsoft-security-alert.xyz"
 | project Timestamp, NetworkMessageId, Url
 | order by Timestamp desc
+```
 
-## Analyst note: Searches email URL telemetry for references to the suspicious domain. Correlate matching NetworkMessageId values with EmailEvents to investigate recipients and message delivery details.
+> **Analyst note:** Searches email URL telemetry for references to the suspicious domain. Correlate matching NetworkMessageId values with EmailEvents to investigate recipients and message delivery details.
 
 ### C. Endpoint Network Activity Hunt
 
 Search endpoint network telemetry for connections involving the suspicious domain.
 
+```kusto
 DeviceNetworkEvents
 | where RemoteUrl contains "microsoft-security-alert.xyz"
 | project Timestamp, DeviceName,
           InitiatingProcessAccountName,
           RemoteUrl, RemoteIP, LocalIP
 | order by Timestamp desc
+```
 
-## Analyst note: Searches endpoint network telemetry for activity involving the suspicious domain. Results depend on endpoint visibility and whether the destination hostname is recorded in RemoteUrl.
+> **Analyst note:** Searches endpoint network telemetry for activity involving the suspicious domain. Results depend on endpoint visibility and whether the destination hostname is recorded in RemoteUrl.
+
+
 
 ## 4. Recommended Defensive Response
 
