@@ -1,8 +1,8 @@
 # Indicators of Compromise (IOC) Register
 
-This register documents the indicators identified during a **simulated phishing email investigation**. It records suspicious email and network characteristics, explains their relevance, and provides example detection queries for security monitoring.
+This register documents the indicators identified during a simulated phishing email investigation. It records suspicious email and network characteristics, explains why they may be relevant, and includes basic KQL query examples to illustrate how an analyst could search for related activity in security data.
 
-The indicators are based on the synthetic evidence used in this exercise. They have not been confirmed as indicators from a real-world phishing campaign.
+The indicators are based on synthetic evidence created for this exercise. They have not been confirmed as indicators from a real-world phishing campaign.
 
 ## Defanging Policy
 
@@ -41,13 +41,15 @@ These characteristics should be assessed together. A suspicious subject line or 
 
 ---
 
-## 3. SIEM Detection and Threat Hunting Queries
+## 3. Basic KQL Query Examples
 
-The following are example Microsoft Sentinel / Microsoft Defender XDR hunting queries. They are provided as detection logic for a lab exercise; they have not been deployed or tested against a live enterprise environment.
+The following query examples use Microsoft Sentinel and Microsoft Defender XDR table structures to demonstrate how security-related email and endpoint data could be searched for the indicators identified during this investigation.
+
+These queries were written for learning and documentation purposes. They have not been executed against ingested security data or deployed as detection rules in a SIEM environment.
 
 ### A. Email Sender Hunt
 
-Search for messages using the claimed sender address or envelope sender address.
+Search email records for messages containing the claimed sender address or envelope sender address.
 
 ```kusto
 EmailEvents
@@ -58,12 +60,11 @@ EmailEvents
           Subject, DeliveryAction
 | order by Timestamp desc
 ```
-
 > **Analyst note:** Identifies messages using the claimed sender or envelope sender address. Matching results do not independently prove spoofing or malicious activity.
 
 ### B. Email URL Hunt
 
-Search email URL records for the suspicious domain.
+Search endpoint network records for activity involving the suspicious domain.
 
 ```kusto
 EmailUrlInfo
@@ -71,12 +72,11 @@ EmailUrlInfo
 | project Timestamp, NetworkMessageId, Url
 | order by Timestamp desc
 ```
-
 > **Analyst note:** Searches email URL telemetry for references to the suspicious domain. Correlate matching NetworkMessageId values with EmailEvents to investigate recipients and message delivery details.
 
 ### C. Endpoint Network Activity Hunt
 
-Search endpoint network telemetry for connections involving the suspicious domain.
+Search endpoint network records for activity involving the suspicious domain.
 
 ```kusto
 DeviceNetworkEvents
@@ -86,10 +86,7 @@ DeviceNetworkEvents
           RemoteUrl, RemoteIP, LocalIP
 | order by Timestamp desc
 ```
-
 > **Analyst note:** Searches endpoint network telemetry for activity involving the suspicious domain. Results depend on endpoint visibility and whether the destination hostname is recorded in RemoteUrl.
-
-
 
 ## 4. Recommended Defensive Response
 
@@ -108,11 +105,11 @@ If these indicators were encountered in a real investigation, a SOC analyst coul
 - The source IP `198.51.100.12` is reserved for documentation and is not a verified malicious IP.
 - The domain and URL are suspicious scenario indicators, not confirmed live attacker infrastructure.
 - No live URL was visited and no credentials were collected.
-- The KQL queries are examples and have not been run against a production SIEM.
-- Query results depend on the relevant Microsoft Defender or Sentinel tables being available and populated.
+- The KQL query examples are for learning and documentation purposes. They have not been executed against live or ingested SIEM data, and their results have not been validated.
+- Query execution depends on the relevant tables, field names, data availability, and schema in the target environment.
 
 ## 6. Analyst Conclusion
 
-This exercise demonstrates how a SOC analyst can extract and document email-related indicators, assess suspicious sender and URL characteristics, and develop example SIEM queries to support threat hunting.
+This investigation allowed me to practise identifying and documenting suspicious email and network indicators using synthetic phishing evidence. I examined sender information, email authentication results, suspicious domains, and URLs to understand why the email could be considered suspicious.
 
-The investigation highlights the importance of validating evidence before classifying an indicator as malicious or recommending containment actions. Accurate documentation and evidence-based conclusions are essential parts of effective security operations.
+I also wrote basic KQL query examples to explore how these indicators could be used to search security-related data in a future investigation. Although I have not yet executed these queries in a SIEM environment, this exercise helped me understand the relationship between IOC documentation, security data, and query-based investigation.
