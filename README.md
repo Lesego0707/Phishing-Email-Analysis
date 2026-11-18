@@ -1,20 +1,17 @@
  Phishing-Email-Analysis
-
+ 
 ## Project Overview
+The investigation focuses on a credential-harvesting attempt impersonating a Microsoft 365 administrative security alert. The exercise involves examining raw email headers, analysing social engineering techniques, identifying suspicious URLs, extracting Indicators of Compromise (IOCs), and drafting basic Kusto Query Language (KQL) query examples for potential security investigations.
 
-This project demonstrates a simulated phishing email investigation conducted from the perspective of a Junior Security Operations Center (SOC) Analyst.
-
-The investigation focuses on a credential-harvesting attempt impersonating a Microsoft 365 administrative security alert. The exercise involves examining raw email headers, analysing social engineering techniques, identifying suspicious URLs, extracting Indicators of Compromise (IOCs), and developing Kusto Query Language (KQL) detection queries for SIEM-based threat hunting.
-
-The project demonstrates a structured approach to phishing email triage, threat identification, evidence documentation, and incident response recommendations.
+The project demonstrates a structured approach to phishing email analysis, evidence documentation, and security response recommendations.
 
 ## Objectives
 
 - **Email Header Analysis:** Examine raw email headers and assess authentication results, including SPF, DKIM, and DMARC.
 - **URL Analysis:** Identify suspicious URLs, examine hostname structures, and recognise domain impersonation and typosquatting techniques.
-- **Threat Intelligence Extraction:** Identify, document, and safely defang relevant Indicators of Compromise (IOCs).
-- **Threat Hunting:** Develop Kusto Query Language (KQL) queries to support the identification of related phishing activity across SIEM log sources.
-- **Incident Response:** Recommend appropriate containment, investigation, and remediation actions to reduce organisational risk.
+- **IOC Identification:** Identify, document, and safely defang relevant Indicators of Compromise (IOCs).
+- **Basic KQL Practice:** Develop introductory KQL query examples to demonstrate how security-related data could be filtered and reviewed during an investigation.
+- **Incident Response Awareness:** Identify appropriate containment, investigation, and remediation recommendations based on the available evidence.
 
 ## Scenario
 
@@ -38,26 +35,29 @@ Phishing-Email-Analysis/
     └── Indicators-of-compromise.md
 ```
 
+
 ## Lessons Learned
 
-This investigation highlights the importance of combining email authentication checks, URL analysis, threat intelligence, and proactive threat hunting when responding to suspected phishing activity.
+Through this investigation, I learned that analysing a phishing email involves more than looking at the sender's address or the message content. I need to examine different pieces of evidence together before deciding whether an email is suspicious.
 
-- **Email Authentication and Defence-in-Depth:** SPF, DKIM, and DMARC provide complementary mechanisms for email authentication and domain protection. A strict DMARC policy, such as `p=reject`, can help prevent unauthorised messages from successfully impersonating an organisation's authenticated domain. However, these controls do not automatically prevent attackers from registering look-alike domains. Additional email security controls, domain monitoring, and user awareness remain important.
+I learned how to review email headers and interpret SPF, DKIM, and DMARC authentication results. I also gained a better understanding of why the Reply-To address matters, especially when it differs from the sender's address and directs replies to a suspicious domain.
 
-- **The Danger of Typosquatting:** Attackers may use domains that closely resemble legitimate brands to deceive recipients. Analysing the hostname and identifying its registrable domain is essential when assessing suspicious URLs. Familiar brand names appearing within a URL do not automatically establish that the destination is legitimate.
+Another important lesson was recognising domain impersonation. I learned that a familiar company name appearing in a URL does not mean the website is legitimate. Examining the actual hostname helped me identify suspicious domain characteristics that could easily be overlooked.
 
-- **Proactive Threat Hunting Through SIEM:** Investigating a reported phishing email should extend beyond the original recipient. SIEM queries can help analysts search available email, authentication, and endpoint telemetry for related activity, including other recipients, suspicious URLs, and potentially compromised accounts.
+I also gained practical experience identifying, extracting, and safely documenting Indicators of Compromise (IOCs). This helped me understand how information collected during an investigation can be organised for further security analysis.
 
-- **Incident Response and Automation:** Automating repetitive triage activities, such as URL defanging, reputation checks, and IOC extraction, can improve investigation efficiency. However, automated results should be validated by an analyst before containment or remediation decisions are made.
+I also gained introductory experience writing basic KQL queries to search and filter security-related data. This helped me understand how queries can be used to identify information that may be relevant to an investigation. I am still developing my KQL skills and look forward to applying them in a practical SIEM environment.
+
+Most importantly, I learned that individual warning signs should not be considered in isolation. A stronger assessment comes from combining email authentication results, sender information, suspicious links, and other available evidence. I also learned to distinguish between what the evidence suggests and what I can actually confirm.
 
 ## Tools and Technologies
 
 - **Email Header Analysis:** Examination of email routing information and authentication results.
 - **CyberChef:** Used to support decoding, data transformation, and URL analysis where applicable.
-- **WHOIS:** Used to investigate domain registration information and assess available domain history where applicable.
-- **Kusto Query Language (KQL):** Used to develop SIEM hunting queries for identifying potentially related phishing activity.
-- **ChatGPT (AI Engineering Assistant):** Used to assist in generating synthetic email evidence and supporting the development of the educational scenario. The generated evidence is not presented as a real-world phishing sample.
-- **GitHub Markdown:** Used for investigation documentation, evidence organisation, and portfolio presentation.
+- **WHOIS:** Used to investigate domain registration information and available registration details where applicable.
+- **Kusto Query Language (KQL):** Used to write basic query examples for filtering and reviewing security-related data. 
+- **ChatGPT:** Used to assist with generating synthetic email evidence and developing the educational scenario.
+
 
 ## Lab Workflow
 
@@ -67,14 +67,13 @@ This investigation highlights the importance of combining email authentication c
 
 3. **Email Content Analysis (`email-analysis.md`):** Examine the message's social engineering techniques, suspicious hyperlinks, and potential domain impersonation.
 
-4. **Threat Intelligence Registration (`Indicators-of-compromise.md`):** Document relevant IOCs in a structured and safely defanged format, alongside KQL detection query examples.
+4. **IOC Identification and Documentation (`Indicators-of-compromise.md`):** Identify relevant indicators, document them in a structured and safely defanged format, and include basic KQL query examples for learning purposes.
 
-5. **Detection and Response Recommendations:** Develop hunting strategies and recommend appropriate containment, investigation, and remediation actions based on the available evidence.
+5. **Security Recommendations:** Document suggested investigation, containment, and remediation steps that an organisation could consider if similar activity were identified.
+
 
 ## Project Status
 
 **Completed — Simulated phishing email investigation and technical documentation.**
 
-The project demonstrates email triage, header analysis, URL investigation, IOC documentation, and the development of SIEM hunting queries.
-
-The investigation uses synthetic evidence and simulated enterprise scenarios. No live phishing campaign, production SIEM deployment, or actual organisational remediation is claimed.
+The project demonstrates introductory email analysis, email header examination, URL investigation, IOC identification and documentation, and basic KQL query development.
