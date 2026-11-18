@@ -11,36 +11,31 @@ The simulated email authentication results indicate failures across all three co
 | Protocol | Status | Analyst Findings & Implications |
 |---|---|---|
 | **SPF** | ❌ **FAIL (Simulated)** | The synthetic `Received-SPF` result indicates that the sending IP address (`198.51.100.12`) is not authorised to send email on behalf of the claimed domain. The IP belongs to the documentation-only TEST-NET-2 range and is not a real Microsoft or attacker infrastructure address. |
-| **DKIM** | ❌ **FAIL (Simulated)** |A DKIM failure indicates that a signature was present but could not be successfully verified, for example because of an invalid signature or a mismatch during verification. | A missing DKIM signature would generally be reported as none, rather than fail.
+| **DKIM** | ❌ **FAIL (Simulated)** | The simulated result indicates that DKIM authentication failed. In a real investigation, the signature and authentication details would need to be examined to determine the reason for the failure. No independent DKIM verification was performed for this exercise. |
 | **DMARC** | ❌ **FAIL (Simulated)** | The simulated DMARC result indicates that neither SPF nor DKIM produced a passing, aligned authentication result for the visible From domain. DMARC requires at least one of these mechanisms to pass and align with the From domain. The scenario assumes a hypothetical `p=reject` policy, but no live Microsoft DMARC policy lookup was performed. |
 
 **Analyst Observation:**
 
-The combined authentication failures represent a significant warning sign in this simulated investigation. However, authentication results should be interpreted alongside the sender address, reply-to information, message content, and available routing evidence before reaching a final verdict.
-
-A DMARC rejection policy instructs receiving mail systems to reject messages that fail DMARC evaluation, subject to receiver handling and local policy. It does not guarantee that every unauthenticated or look-alike message will be blocked.
+All three email authentication checks are shown as failed in the simulated results. This made me question whether the email was genuinely sent by Microsoft. I learned that these failures are important warning signs, but they should not be used on their own to determine whether an email is malicious. They need to be considered together with the sender details, Reply-To address, message content, and other available evidence.
 
 ## 2. Mail Envelope & Routing Breakdown
 
 The following indicators are taken from the synthetic email sample.
 
 - **Claimed Sender (`From:`):** `Microsoft Account Team <security@microsoft.com>`
-  - **Analysis:** The visible sender address claims to represent Microsoft. This identity should not be trusted without validating the authentication results and other available evidence.
+-  **Analysis:** The visible sender address claims to represent Microsoft. This identity should not be trusted without validating the authentication results and other available evidence.
 
 - **Reported Sending Host (`Received:`):** `mail.microsoft-security-alert.xyz`
   - **Analysis:** The synthetic routing information identifies a mail host using a domain that resembles Microsoft's branding. The registrable domain is `microsoft-security-alert.xyz`, not `microsoft.com`. This is consistent with a possible brand-impersonation technique.
 
 - **Source IP Address:** `198.51.100.12`
   - **Analysis:** This is a documentation-only IPv4 address within the TEST-NET-2 range, reserved for examples and documentation under RFC 5737. It is not a real public attacker IP and cannot be used to identify or geolocate actual malicious infrastructure.
-
 - **Reply-To Address:** `support@microsoft-security-alert.xyz`
-  - **Analysis:** The Reply-To address differs from the claimed Microsoft sender domain. If the recipient replies, the email client may direct the response to the alternative address, potentially exposing information to an unauthorised party.
+- **Analysis:** The Reply-To address differs from the claimed Microsoft sender domain. If the recipient replies, the email client may direct the response to the alternative address, potentially exposing information to an unauthorised party.
 
 **Analyst Observation:**
 
-The mismatch between the visible sender identity, reported sending host, and Reply-To address raises suspicion of brand impersonation and possible credential-harvesting activity.
-
-However, Received headers must be interpreted carefully. An analyst should identify trusted mail servers and establish which systems added the routing information. Individual Received headers can be forged before a message enters trusted mail infrastructure.
+What stood out to me was that the email claimed to come from Microsoft, but the reported sending host and Reply-To address used a different domain. This raised my suspicion that the sender was impersonating Microsoft. The different Reply-To address was particularly concerning because a recipient replying to the email could be communicating with an address outside Microsoft's domain.
 
 ## 3. Infrastructure Triage Methodology (Hypothetical)
 
@@ -75,14 +70,23 @@ Although live infrastructure investigation was outside the scope of this synthet
 
 ## 4. Analyst Conclusion
 
-The simulated email exhibits several characteristics consistent with a phishing attempt:
+Based on the evidence presented in this simulated investigation, I consider the email suspicious and consistent with a phishing attempt.
 
-- Failed simulated SPF, DKIM, and DMARC authentication results.
-- A visible sender address claiming to represent Microsoft.
-- A reported sending host using a brand-imitating domain.
-- A Reply-To address pointing to a different domain.
-- A hypothetical account-suspension threat designed to create urgency.
+The main reasons for my assessment are the simulated authentication failures, the Microsoft sender identity, the suspicious domain used in the reported sending host, the different Reply-To address, and the urgency created by the account-suspension message.
 
-Taken together, these indicators support classifying the message as **suspected phishing within the simulated exercise**.
+These findings raised concerns that the email could be intended to deceive recipients and direct them to an unauthorised source. However, because the evidence is synthetic and the sending infrastructure was not independently verified, I cannot confirm an actual phishing campaign or identify a real attacker.
 
-The findings are based on synthetic evidence and should not be interpreted as proof of a real Microsoft security incident or actual attacker infrastructure.
+This investigation helped me understand how different email indicators can support an assessment, and why it is important to explain the evidence behind a conclusion rather than rely on a single suspicious detail.
+
+## 5. Lessons Learned
+
+Through this exercise, I learned how to read email header information more carefully and why the visible sender address alone cannot be relied upon to establish whether an email is legitimate.
+
+I gained a better understanding of SPF, DKIM, and DMARC, and how their authentication results can help assess sender authenticity. I also learned that authentication failures are warning signs that need to be considered alongside other evidence rather than treated as automatic proof of phishing.
+
+Examining the From, Reply-To, and Received fields helped me understand how email identities and routing information can reveal inconsistencies. I learned why the Reply-To address is particularly important, as it may direct a response somewhere different from the address displayed to the recipient.
+
+Another important lesson was understanding the limitations of the evidence. Since this investigation used synthetic headers and a documentation-only IP address, I could assess the indicators presented in the scenario but could not independently verify real sending infrastructure or attribute activity to an actual source.
+
+This exercise taught me to be more careful when interpreting technical evidence, to distinguish simulated results from independently verified findings, and to avoid making conclusions beyond what the available information supports.
+
